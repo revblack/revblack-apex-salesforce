@@ -1,0 +1,25 @@
+@isTest
+public class HSScheduledContactSync_test {
+    static testmethod void test(){
+    
+    //put the 18 digit user Id of a user in your org. Hopefully you have a HubSpot Integration user, you can use that here.
+    String ownerSalesforceId = '';
+        
+            List <Contact> conList = new List<Contact>();
+    for (Integer i=0;i<201;i++) {
+        Contact con = new Contact(LastName = 'Contact ' + i, Email= 'con' + i + '@test.com',  OwnerId = ownerSalesforceId);
+        conList.add(con);
+    }
+    insert conList;
+        
+    String CRON_EXP = '0 6 * * * ?';
+  Test.startTest();
+         
+        
+    String jobId = System.schedule('HS Daily Contact Sync',  CRON_EXP, new HSScheduledContactSync_cron());
+    CronTrigger ct = [SELECT Id, CronExpression, TimesTriggered, NextFireTime FROM CronTrigger WHERE id = :jobId];
+        Test.stopTest();
+
+        
+    }
+}
