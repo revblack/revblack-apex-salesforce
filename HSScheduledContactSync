@@ -1,0 +1,32 @@
+global class HSDailyContactSync implements Database.Batchable<sObject> {
+    global Database.QueryLocator start(Database.BatchableContext BC) {
+        // collect the batches of records or objects to be passed to execute
+         
+        String query = 'SELECT Id, Last_HS_Forced_Sync__c FROM Contact' + (Test.isRunningTest()?' LIMIT 200':'');
+
+        system.debug(Database.getQueryLocator(query));
+     
+        return Database.getQueryLocator(query);
+    }
+     
+    global void execute(Database.BatchableContext BC, List<Contact> conList) {
+        system.debug(conList);
+        // process each batch of records default size is 200
+        for(Contact con : conList) {        
+            // Update the Last_HS_Forced_Sync__c
+            con.Last_HS_Forced_Sync__c  = Datetime.now();
+        }
+        try {
+            // Update the Contact Record
+            update conList;
+         
+        } catch(Exception e) {
+            System.debug(e);
+        }
+         
+    }   
+     
+    global void finish(Database.BatchableContext BC) {
+        // execute any post-processing operations like sending email
+    }
+}
