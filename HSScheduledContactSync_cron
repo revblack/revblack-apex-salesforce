@@ -1,0 +1,6 @@
+global class HSScheduledContactSync_cron implements Schedulable {
+   global void execute(SchedulableContext sc) {
+      HSScheduledContactSync h = new HSScheduledContactSync(); 
+      Database.executeBatch(h);
+   }
+}
